@@ -9,18 +9,41 @@ BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 FRONTEND_DIST = os.path.join(BASE_DIR, "frontend", "dist")
 
 
+def normalize_database_url(url: str) -> str:
+    """Hosted Postgres providers (Supabase, Render, Neon) hand out postgres:// or postgresql://
+    URLs; SQLAlchemy needs the driver named explicitly to use psycopg 3."""
+    for prefix in ("postgres://", "postgresql://"):
+        if url.startswith(prefix):
+            return "postgresql+psycopg://" + url[len(prefix):]
+    return url
+
+
+def _is_production() -> bool:
+    # Render sets RENDER=true on its servers; FLASK_ENV=production works anywhere else.
+    return os.environ.get("RENDER") == "true" or os.environ.get("FLASK_ENV") == "production"
+
+
 def create_app(config: dict | None = None) -> Flask:
     app = Flask(__name__, instance_path=os.path.join(BASE_DIR, "instance"), static_folder=None)
     os.makedirs(app.instance_path, exist_ok=True)
+    production = _is_production() and not (config or {}).get("TESTING")
+    if production and not os.environ.get("SECRET_KEY"):
+        raise RuntimeError("SECRET_KEY must be set in production.")
+    database_url = normalize_database_url(
+        os.environ.get("DATABASE_URL") or "sqlite:///" + os.path.join(app.instance_path, "capsense.db")
+    )
     app.config.from_mapping(
         SECRET_KEY=os.environ.get("SECRET_KEY") or _dev_secret(app.instance_path),
-        SQLALCHEMY_DATABASE_URI=os.environ.get(
-            "DATABASE_URL", "sqlite:///" + os.path.join(app.instance_path, "capsense.db")
-        ),
+        SQLALCHEMY_DATABASE_URI=database_url,
+        # Hosted Postgres drops idle connections; check each one before use.
+        SQLALCHEMY_ENGINE_OPTIONS={"pool_pre_ping": True, "pool_recycle": 280}
+        if database_url.startswith("postgresql") else {},
         SESSION_COOKIE_SAMESITE="Lax",
         SESSION_COOKIE_HTTPONLY=True,
+        SESSION_COOKIE_SECURE=production,  # HTTPS-only cookies when deployed
         REMEMBER_COOKIE_SAMESITE="Lax",
         REMEMBER_COOKIE_HTTPONLY=True,
+        REMEMBER_COOKIE_SECURE=production,
         RATELIMIT_ENABLED=True,
         SEED_TITLES_CSV=os.path.join(BASE_DIR, "data", "seed_titles.csv"),
         KB_DIR=os.path.join(BASE_DIR, "data", "knowledge_base"),
@@ -30,6 +53,13 @@ def create_app(config: dict | None = None) -> Flask:
     )
     if config:
         app.config.update(config)
+
+    if production:
+        # Render sits behind a proxy: trust its X-Forwarded-For/Proto so rate limits see the
+        # real client IP and Flask knows the request came over HTTPS.
+        from werkzeug.middleware.proxy_fix import ProxyFix
+
+        app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1)
 
     db.init_app(app)
     login_manager.init_app(app)

@@ -1,0 +1,17 @@
+# Render Blueprint: New > Blueprint in the Render dashboard, then pick this repository.
+# The database is Supabase (not created here). Paste its Session pooler URL as DATABASE_URL.
+services:
+  - type: web
+    name: capsense
+    runtime: docker
+    plan: free
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /api/meta
+    autoDeploy: true
+    envVars:
+      - key: DATABASE_URL
+        sync: false # you'll be asked for it: the Supabase Session pooler connection string
+      - key: SECRET_KEY
+        generateValue: true # signs login sessions
+      - key: FERNET_KEY
+        generateValue: true # encrypts students' remembered API keys; keep it stable

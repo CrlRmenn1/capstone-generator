@@ -48,6 +48,28 @@ Open http://localhost:5173
 
 After editing React code, run `npm run build` again so http://127.0.0.1:5000 shows the changes.
 
+## Deploy (Render + Supabase)
+The app runs on Render as one Docker web service (`Dockerfile`, `render.yaml`). It stores data in a Supabase Postgres database.
+
+**1. Create the database (Supabase)**
+1. Create a project at supabase.com and save the database password you choose.
+2. Click **Connect** at the top of the project, then copy the **Session pooler** connection string. It looks like `postgresql://postgres.<project-ref>:<password>@aws-0-<region>.pooler.supabase.com:5432/postgres`.
+   - Don't use the "Direct connection": it's IPv6-only and Render can't reach it.
+   - Don't use the "Transaction pooler" (port 6543).
+3. Replace `[YOUR-PASSWORD]` with your database password and add `?sslmode=require` to the end.
+
+**2. Create the web service (Render)**
+1. In the Render dashboard, choose **New → Blueprint** and select this GitHub repository. Render reads `render.yaml`.
+2. When asked for `DATABASE_URL`, paste the Supabase URL from step 1. `SECRET_KEY` and `FERNET_KEY` are generated for you.
+3. Click **Apply**. The first build takes a few minutes. When it's done, open the `onrender.com` URL.
+
+On first start, the app creates its tables in Supabase and imports the seed titles. Later pushes to `main` redeploy automatically.
+
+**Notes**
+- Free Render services sleep after inactivity, so the first visit afterwards takes up to about a minute. API keys that students didn't choose to "remember" are cleared when the service sleeps or redeploys. Remembered keys and all other data stay in Supabase.
+- Never change `FERNET_KEY` after students have saved keys: remembered keys can no longer be decrypted, and students would have to enter them again.
+- The server runs with a single gunicorn worker on purpose, because session-only API keys live in process memory. Raise `--threads` in the `Dockerfile` if you need more concurrency.
+
 ## Tests
 ```powershell
 .\.venv\Scripts\python.exe -m pytest -q
