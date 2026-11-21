@@ -27,8 +27,15 @@ def create_app(config: dict | None = None) -> Flask:
     app = Flask(__name__, instance_path=os.path.join(BASE_DIR, "instance"), static_folder=None)
     os.makedirs(app.instance_path, exist_ok=True)
     production = _is_production() and not (config or {}).get("TESTING")
-    if production and not os.environ.get("SECRET_KEY"):
-        raise RuntimeError("SECRET_KEY must be set in production.")
+    if production:
+        missing = [name for name in ("SECRET_KEY", "DATABASE_URL") if not os.environ.get(name)]
+        if missing:
+            # Without DATABASE_URL the app would fall back to a SQLite file that the host wipes
+            # on every restart, silently losing accounts and drafts.
+            raise RuntimeError(
+                f"Missing environment variable(s): {', '.join(missing)}. "
+                "Add them in the Render dashboard under Environment, then redeploy."
+            )
     database_url = normalize_database_url(
         os.environ.get("DATABASE_URL") or "sqlite:///" + os.path.join(app.instance_path, "capsense.db")
     )

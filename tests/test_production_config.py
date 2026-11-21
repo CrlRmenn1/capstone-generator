@@ -42,8 +42,12 @@ def test_production_mode_hardens_cookies_and_trusts_proxy(production_env):
     assert resp.status_code == 200
 
 
-def test_production_requires_secret_key(monkeypatch):
+def test_production_requires_secret_key_and_database(monkeypatch):
     monkeypatch.setenv("RENDER", "true")
     monkeypatch.delenv("SECRET_KEY", raising=False)
-    with pytest.raises(RuntimeError, match="SECRET_KEY"):
+    monkeypatch.delenv("DATABASE_URL", raising=False)
+    with pytest.raises(RuntimeError, match="SECRET_KEY, DATABASE_URL"):
+        create_app({"RATELIMIT_ENABLED": False})
+    monkeypatch.setenv("SECRET_KEY", "x")
+    with pytest.raises(RuntimeError, match="DATABASE_URL"):
         create_app({"RATELIMIT_ENABLED": False})
