@@ -123,7 +123,25 @@
   }
 }
 
-/* The one orchestrated motion: a title being set onto the title page. */
+/*
+  Motion. Every movement answers something the student did (opening, switching, saving).
+  One curve and three durations keep it consistent. Reduced-motion users get none.
+*/
+:root {
+  --ease: cubic-bezier(0.22, 0.75, 0.2, 1); /* quick start, soft landing */
+  --dur-fast: 150ms;
+  --dur: 240ms;
+  --dur-slow: 380ms;
+}
+@theme inline {
+  --ease-soft: var(--ease);
+}
+
+html {
+  scrollbar-gutter: stable; /* no sideways jump when a page gets long enough to scroll */
+}
+
+/* The title being set onto the title page. */
 @keyframes typeset {
   from {
     opacity: 0;
@@ -135,8 +153,9 @@
   }
 }
 .typeset {
-  animation: typeset 0.45s ease-out both;
+  animation: typeset 0.45s var(--ease) both;
 }
+
 @keyframes rise {
   from {
     opacity: 0;
@@ -148,7 +167,149 @@
   }
 }
 .rise {
-  animation: rise 0.2s ease-out both;
+  animation: rise var(--dur) var(--ease) both;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+.fade-in {
+  animation: fade-in var(--dur) var(--ease) both;
+}
+
+/* Page change: a short fade with a hint of lift. */
+@keyframes page-enter {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.page-enter {
+  animation: page-enter 0.32s var(--ease) both;
+}
+
+/* Tour steps slide in the direction you're going. */
+@keyframes from-right {
+  from {
+    opacity: 0;
+    transform: translateX(14px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes from-left {
+  from {
+    opacity: 0;
+    transform: translateX(-14px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.from-right {
+  animation: from-right var(--dur) var(--ease) both;
+}
+.from-left {
+  animation: from-left var(--dur) var(--ease) both;
+}
+
+/* Dialog and backdrop, in and out. */
+@keyframes dialog-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes dialog-out {
+  to {
+    opacity: 0;
+    transform: translateY(6px) scale(0.99);
+  }
+}
+.dialog-in {
+  animation: dialog-in var(--dur-slow) var(--ease) both;
+}
+.dialog-out {
+  animation: dialog-out var(--dur-fast) ease-in both;
+}
+.backdrop-in {
+  animation: fade-in var(--dur) var(--ease) both;
+}
+.backdrop-out {
+  animation: fade-in var(--dur-fast) ease-in reverse both;
+}
+
+/* Toasts */
+@keyframes toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes toast-out {
+  to {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+}
+.toast-in {
+  animation: toast-in var(--dur) var(--ease) both;
+}
+.toast-out {
+  animation: toast-out 200ms ease-in both;
+}
+
+/* A check mark landing. */
+@keyframes pop {
+  0% {
+    transform: scale(0.4);
+    opacity: 0;
+  }
+  60% {
+    transform: scale(1.15);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+.pop {
+  animation: pop 0.32s var(--ease) both;
+}
+
+/* Loading placeholders that hold the page's shape. */
+@keyframes shimmer {
+  from {
+    background-position: 100% 0;
+  }
+  to {
+    background-position: -100% 0;
+  }
+}
+.skeleton {
+  border-radius: 3px;
+  background: linear-gradient(90deg, var(--rule-soft) 30%, var(--rule) 50%, var(--rule-soft) 70%) 0 0 / 200% 100%;
+  animation: shimmer 1.4s linear infinite;
 }
 
 @media (prefers-reduced-motion: reduce) {

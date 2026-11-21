@@ -1,6 +1,7 @@
 import { Check, X } from "lucide-react";
 import { Link } from "react-router";
 import { useApp } from "../app-context";
+import { Collapse } from "./motion";
 import { cx } from "./ui";
 
 const scrollToForm = () => document.getElementById("preferences")?.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -43,17 +44,20 @@ export default function GettingStarted() {
           <li key={s.title} className="flex gap-3">
             <span
               className={cx(
-                "mt-0.5 grid size-5 shrink-0 place-items-center rounded-[4px] border text-[11px] font-semibold",
+                "mt-0.5 grid size-5 shrink-0 place-items-center rounded-[4px] border text-[11px] font-semibold transition-colors duration-[var(--dur)]",
                 s.done ? "border-binding bg-binding text-binding-ink" : i === next ? "border-binding text-binding" : "border-rule text-ink-faint",
               )}
               aria-label={s.done ? "Done" : "Not done yet"}
             >
-              {s.done ? <Check className="size-3" strokeWidth={3} /> : i + 1}
+              {s.done ? <Check className="pop size-3" strokeWidth={3} /> : i + 1}
             </span>
             <div className="min-w-0 text-sm">
-              <p className={cx("font-medium", s.done && "text-ink-faint line-through decoration-ink-faint/60")}>{s.title}</p>
-              {!s.done && <p className="mt-0.5 text-ink-soft">{s.hint}</p>}
-              {!s.done && i === next && s.action && <p className="mt-1">{s.action}</p>}
+              <p className={cx("font-medium transition-colors duration-[var(--dur)]", s.done && "text-ink-faint line-through decoration-ink-faint/60")}>{s.title}</p>
+              {/* Hints fold away once a step is done, instead of vanishing. */}
+              <Collapse open={!s.done}>
+                <p className="mt-0.5 text-ink-soft">{s.hint}</p>
+                {i === next && s.action && <p className="mt-1">{s.action}</p>}
+              </Collapse>
             </div>
           </li>
         ))}

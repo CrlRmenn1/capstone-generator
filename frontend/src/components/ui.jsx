@@ -12,23 +12,36 @@ const VARIANTS = {
   ghost: "text-ink-soft hover:bg-rule-soft hover:text-ink",
   danger: "text-redpen hover:bg-redpen-wash",
 };
-const SIZES = { sm: "h-8 px-2.5 text-[13px] gap-1.5", md: "h-10 px-4 text-sm gap-2", lg: "h-11 px-5 text-[15px] gap-2" };
+const SIZES = { sm: "h-8 px-2.5 text-[13px]", md: "h-10 px-4 text-sm", lg: "h-11 px-5 text-[15px]" };
+const GAPS = { sm: "gap-1.5", md: "gap-2", lg: "gap-2" };
+const PRESS =
+  "transition-[color,background-color,border-color,opacity,transform] duration-[var(--dur-fast)] ease-soft active:scale-[0.97] disabled:active:scale-100";
 
 export function Button({ variant = "primary", size = "md", loading, icon: Icon, children, className, ...props }) {
   return (
     <button
       className={cx(
-        "inline-flex shrink-0 items-center justify-center rounded-md font-medium whitespace-nowrap transition-colors",
+        "relative inline-flex shrink-0 items-center justify-center rounded-md font-medium whitespace-nowrap",
         "disabled:cursor-not-allowed disabled:opacity-50",
+        PRESS,
         VARIANTS[variant],
         SIZES[size],
         className,
       )}
       disabled={loading || props.disabled}
+      aria-busy={loading || undefined}
       {...props}
     >
-      {loading ? <LoaderCircle className="size-4 animate-spin" /> : Icon && <Icon className="size-4" />}
-      {children}
+      {/* The label stays in place (invisible) while loading, so the button keeps its width. */}
+      <span className={cx("inline-flex items-center", GAPS[size], loading && "invisible")}>
+        {Icon && <Icon className="size-4" />}
+        {children}
+      </span>
+      {loading && (
+        <span className="absolute inset-0 grid place-items-center">
+          <LoaderCircle className="size-4 animate-spin" />
+        </span>
+      )}
     </button>
   );
 }
@@ -67,7 +80,7 @@ export function Difficulty({ level }) {
 
 export function Spinner({ label = "Loading…" }) {
   return (
-    <div className="flex items-center justify-center gap-2 py-16 text-sm text-ink-soft" role="status">
+    <div className="fade-in flex min-h-[50vh] items-center justify-center gap-2 text-sm text-ink-soft" role="status">
       <LoaderCircle className="size-4 animate-spin" /> {label}
     </div>
   );
@@ -84,7 +97,7 @@ const ALERT = {
 export function Alert({ tone = "info", title, children, action, onClose }) {
   const { icon: Icon, rule, text } = ALERT[tone];
   return (
-    <div className={cx("flex gap-3 border-l-2 bg-paper py-3 pr-3 pl-4 text-sm", rule)} role={tone === "error" ? "alert" : "status"}>
+    <div className={cx("rise flex gap-3 border-l-2 bg-paper py-3 pr-3 pl-4 text-sm", rule)} role={tone === "error" ? "alert" : "status"}>
       <Icon className={cx("mt-0.5 size-4 shrink-0", text)} />
       <div className="min-w-0 flex-1 text-ink-soft">
         {title && <p className="font-semibold text-ink">{title}</p>}
@@ -125,4 +138,4 @@ export function PageHeader({ title, description, actions }) {
 
 /** Link styled as a button (for navigation, keeps semantics right). */
 export const linkButton = (variant = "primary", size = "md") =>
-  cx("inline-flex items-center justify-center rounded-md font-medium whitespace-nowrap transition-colors", VARIANTS[variant], SIZES[size]);
+  cx("inline-flex items-center justify-center rounded-md font-medium whitespace-nowrap", GAPS[size], PRESS, VARIANTS[variant], SIZES[size]);

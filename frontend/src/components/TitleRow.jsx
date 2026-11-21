@@ -1,6 +1,7 @@
 import { Bookmark, BookmarkCheck, Check, Copy, FileText, Sparkles } from "lucide-react";
 import { useState } from "react";
 import { useApp } from "../app-context";
+import { Collapse, SwapLabel } from "./motion";
 import { Button, cx, Difficulty, keepHyphens, Tag } from "./ui";
 
 export const SOURCE_LABEL = { template: "Built-in", ai: "AI", database: "Already done" };
@@ -22,34 +23,38 @@ function CopyButton({ text }) {
         }
       }}
     >
-      {copied ? "Copied" : "Copy title"}
+      <SwapLabel show={copied} off="Copy title" on="Copied" />
     </Button>
   );
 }
 
 /**
- * One suggestion in a ranked list. Selecting a row expands it and (on wide screens)
- * sets its title on the title page preview.
+ * One suggestion in a ranked list. Opening a row expands its details; the row you opened
+ * last is "selected" and set on the title page preview. Rows don't close each other, so
+ * nothing above the row you clicked moves.
  */
-export default function TitleRow({ item, rank, selected, onSelect, saved, onToggleSave, onDevelop, developing, showSource }) {
+export default function TitleRow({ item, rank, expanded, selected, onToggle, saved, onToggleSave, onDevelop, developing, showSource, index = 0 }) {
   const { meta } = useApp();
   const existing = item.source === "database";
   const areaLabel = meta?.technologies?.find((t) => t.key === item.area)?.label;
   const detailsId = `details-${rank}-${item.title.length}`;
 
   return (
-    <li className={cx("border-t border-rule transition-colors", selected ? "bg-paper" : "hover:bg-paper/60")}>
-      <div className={cx("border-l-2", selected ? "border-binding" : "border-transparent")}>
+    <li
+      className={cx("rise border-t border-rule transition-colors duration-[var(--dur)] ease-soft", expanded ? "bg-paper" : "hover:bg-paper/60")}
+      style={{ animationDelay: `${Math.min(index, 10) * 35}ms` }}
+    >
+      <div className={cx("border-l-2 transition-colors duration-[var(--dur)] ease-soft", selected ? "border-binding" : "border-transparent")}>
         <button
           type="button"
-          onClick={onSelect}
-          aria-expanded={selected}
+          onClick={onToggle}
+          aria-expanded={expanded}
           aria-controls={detailsId}
           className="grid w-full grid-cols-[2rem_minmax(0,1fr)_auto] items-baseline gap-x-3 px-4 py-4 text-left sm:px-5"
         >
           <span className="font-serif text-lg text-ink-faint tabular-nums">{rank}</span>
           <span className="min-w-0">
-            <span className={cx("block font-serif text-[17px] leading-snug", selected ? "font-semibold text-ink" : "text-ink")}>{keepHyphens(item.title)}</span>
+            <span className="block font-serif text-[17px] leading-snug text-ink">{keepHyphens(item.title)}</span>
             <span className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-ink-soft">
               {showSource && <Tag tone={item.source === "ai" ? "binding" : existing ? "redpen" : "plain"} icon={item.source === "ai" ? Sparkles : undefined}>{SOURCE_LABEL[item.source]}</Tag>}
               {!showSource && item.source === "ai" && <Tag tone="binding" icon={Sparkles}>AI</Tag>}
@@ -74,8 +79,8 @@ export default function TitleRow({ item, rank, selected, onSelect, saved, onTogg
           </span>
         </button>
 
-        {selected && (
-          <div id={detailsId} className="rise px-4 pb-5 sm:pl-[3.75rem] sm:pr-5">
+        <Collapse open={expanded}>
+          <div id={detailsId} className="px-4 pb-5 sm:pl-[3.75rem] sm:pr-5">
             {item.abstract && <p className="max-w-[68ch] font-serif text-[15.5px] leading-relaxed text-ink-soft">{item.abstract}</p>}
             {existing && item.tech_stack && <p className="mt-2 text-sm text-ink-soft">Built with {item.tech_stack}</p>}
             {existing && (
@@ -123,13 +128,13 @@ export default function TitleRow({ item, rank, selected, onSelect, saved, onTogg
               )}
               {onToggleSave && (
                 <Button variant="ghost" size="sm" icon={saved ? BookmarkCheck : Bookmark} onClick={() => onToggleSave(item)} className={saved ? "text-binding" : ""}>
-                  {saved ? "Saved" : "Save"}
+                  <SwapLabel show={saved} off="Save" on="Saved" />
                 </Button>
               )}
               <CopyButton text={item.title} />
             </div>
           </div>
-        )}
+        </Collapse>
       </div>
     </li>
   );

@@ -1,10 +1,11 @@
 import { ArrowLeft, Check, Copy, Download, Pencil, RefreshCw, Undo2 } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useParams } from "react-router";
 import { api, download } from "../api";
 import { useApp } from "../app-context";
 import Markdown, { countCites } from "../components/Markdown";
-import { Button, cx, EmptyState, keepHyphens, linkButton, Spinner } from "../components/ui";
+import { AutoHeight, SkeletonLines, SwapLabel } from "../components/motion";
+import { Button, cx, EmptyState, keepHyphens, linkButton } from "../components/ui";
 
 const SOURCE_NOTE = { template: "", ai: "Written with AI", user: "Edited by you" };
 
@@ -15,6 +16,15 @@ function Section({ outlineId, number, section, onChange }) {
   const [busy, setBusy] = useState(null);
   const [previous, setPrevious] = useState(null);
   const [copied, setCopied] = useState(false);
+  const [editHeight, setEditHeight] = useState(null);
+  const viewRef = useRef(null);
+
+  function startEditing() {
+    // Open the editor at the height the text already takes up, so the page doesn't jump.
+    setEditHeight(viewRef.current ? Math.max(256, viewRef.current.offsetHeight) : null);
+    setDraft(section.content);
+    setEditing(true);
+  }
 
   async function patch(content, kind, message) {
     setBusy(kind);
@@ -63,11 +73,11 @@ function Section({ outlineId, number, section, onChange }) {
         {SOURCE_NOTE[section.source] && <span className="text-[12px] text-binding">{SOURCE_NOTE[section.source]}</span>}
         {!editing && (
           <div className="ml-auto flex flex-wrap gap-0.5 font-sans">
-            <button className={tool} onClick={() => { setDraft(section.content); setEditing(true); }}><Pencil className="size-3.5" /> Edit</button>
+            <button className={tool} onClick={startEditing}><Pencil className="size-3.5" /> Edit</button>
             <button className={tool} onClick={() => regenerate()} disabled={busy === "regen"}>
               <RefreshCw className={cx("size-3.5", busy === "regen" && "animate-spin")} /> {engine === "ai" ? "Rewrite with AI" : "Rewrite"}
             </button>
-            {previous !== null && <button className={tool} onClick={() => patch(previous, "undo", "Change undone.")} disabled={busy === "undo"}><Undo2 className="size-3.5" /> Undo</button>}
+            {previous !== null && <button className={cx(tool, "fade-in")} onClick={() => patch(previous, "undo", "Change undone.")} disabled={busy === "undo"}><Undo2 className="size-3.5" /> Undo</button>}
             <button
               className={tool}
               onClick={async () => {
@@ -80,40 +90,46 @@ function Section({ outlineId, number, section, onChange }) {
                 }
               }}
             >
-              {copied ? <Check className="size-3.5" /> : <Copy className="size-3.5" />} {copied ? "Copied" : "Copy"}
+              {copied ? <Check className="pop size-3.5" /> : <Copy className="size-3.5" />} <SwapLabel show={copied} off="Copy" on="Copied" />
             </button>
           </div>
         )}
       </header>
 
-      {editing ? (
-        <div className="space-y-3 font-sans">
-          <textarea
-            className="input manuscript min-h-64 !text-[16px]"
-            rows={Math.min(28, draft.split("\n").length + 3)}
-            value={draft}
-            onChange={(e) => setDraft(e.target.value)}
-            maxLength={20000}
-            autoFocus
-          />
-          <p className="text-[13px] text-ink-faint">
-            Leave a blank line between paragraphs. Start a line with "- " for a bullet or "1. " for a numbered item. Wrap words in **double asterisks** for bold.
-          </p>
-          <div className="flex justify-end gap-2">
-            <Button variant="ghost" size="sm" onClick={() => { setDraft(section.content); setEditing(false); }}>Cancel</Button>
-            <Button size="sm" loading={busy === "save"} onClick={() => patch(draft, "save", "Section saved.")}>Save section</Button>
-          </div>
-        </div>
-      ) : (
-        <div className={cx("transition-opacity", busy === "regen" && "opacity-40")}>
-          <Markdown content={section.content} />
-          {(section.key === "problem" || section.key === "objectives") && (
-            <p className="mt-4 font-sans text-[13px] text-ink-faint">
-              Each specific problem has a matching objective in the same order. If you change one, update the other.
+      {/* Height changes (rewrites, switching to the editor) animate instead of snapping. */}
+      <AutoHeight>
+        {editing ? (
+          <div className="fade-in space-y-3 font-sans">
+            <textarea
+              className="input manuscript block resize-y !text-[16px]"
+              style={{ height: editHeight ? `${editHeight}px` : undefined, minHeight: "16rem" }}
+              value={draft}
+              onChange={(e) => setDraft(e.target.value)}
+              maxLength={20000}
+              autoFocus
+            />
+            <p className="text-[13px] text-ink-faint">
+              Leave a blank line between paragraphs. Start a line with "- " for a bullet or "1. " for a numbered item. Wrap words in **double asterisks** for bold.
             </p>
-          )}
-        </div>
-      )}
+            <div className="flex justify-end gap-2">
+              <Button variant="ghost" size="sm" onClick={() => { setDraft(section.content); setEditing(false); }}>Cancel</Button>
+              <Button size="sm" loading={busy === "save"} onClick={() => patch(draft, "save", "Section saved.")}>Save section</Button>
+            </div>
+          </div>
+        ) : (
+          <div ref={viewRef} className={cx("transition-opacity duration-[var(--dur)]", busy === "regen" && "opacity-40")}>
+            {/* Keyed by version: new text fades in after a rewrite, edit, or undo. */}
+            <div key={section.version} className="fade-in">
+              <Markdown content={section.content} />
+            </div>
+            {(section.key === "problem" || section.key === "objectives") && (
+              <p className="mt-4 font-sans text-[13px] text-ink-faint">
+                Each specific problem has a matching objective in the same order. If you change one, update the other.
+              </p>
+            )}
+          </div>
+        )}
+      </AutoHeight>
     </section>
   );
 }
@@ -151,7 +167,27 @@ export default function OutlineEditorPage() {
         {error.message}
       </EmptyState>
     );
-  if (!outline) return <Spinner label="Opening draft…" />;
+  if (!outline)
+    return (
+      // Placeholder in the shape of the draft page, so nothing jumps when it arrives.
+      <div role="status" aria-label="Opening draft">
+        <div className="skeleton mb-8 h-4 w-24" />
+        <div className="mb-10 max-w-3xl space-y-3">
+          <div className="skeleton h-9 w-11/12" />
+          <div className="skeleton h-9 w-3/4" />
+          <div className="skeleton mt-4 h-3.5 w-1/2" />
+        </div>
+        <div className="grid gap-10 lg:grid-cols-[270px_minmax(0,1fr)]">
+          <SkeletonLines lines={7} className="hidden lg:block" />
+          <div className="sheet px-6 py-10 sm:px-14 sm:py-16">
+            <div className="mx-auto max-w-[68ch]">
+              <div className="skeleton mx-auto mb-12 h-4 w-28" />
+              <SkeletonLines lines={5} />
+            </div>
+          </div>
+        </div>
+      </div>
+    );
 
   const updateSection = (updated) => setOutline((o) => ({ ...o, sections: o.sections.map((s) => (s.key === updated.key ? updated : s)) }));
 

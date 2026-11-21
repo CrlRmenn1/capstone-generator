@@ -49,8 +49,10 @@ export function AppProvider({ children }) {
 
   const toast = useCallback((message, tone = "success") => {
     const id = Math.random().toString(36).slice(2);
-    setToasts((list) => [...list, { id, message, tone }]);
-    setTimeout(() => setToasts((list) => list.filter((t) => t.id !== id)), 3500);
+    // Keep at most 3 on screen; mark as leaving first so the exit can animate.
+    setToasts((list) => [...list.slice(-2), { id, message, tone, leaving: false }]);
+    setTimeout(() => setToasts((list) => list.map((t) => (t.id === id ? { ...t, leaving: true } : t))), 3200);
+    setTimeout(() => setToasts((list) => list.filter((t) => t.id !== id)), 3450);
   }, []);
 
   const setEnginePreference = useCallback((value) => {

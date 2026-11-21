@@ -1,5 +1,5 @@
 import { Check, RefreshCw } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { api } from "../api";
 import { useApp } from "../app-context";
 import GettingStarted from "../components/GettingStarted";
@@ -39,18 +39,60 @@ function Option({ selected, onClick, icon: Icon, children, sub }) {
       onClick={onClick}
       aria-pressed={selected}
       className={cx(
-        "relative flex items-start gap-2 rounded-md border px-3 py-2 text-left text-sm transition-colors",
+        "relative flex items-start gap-2 rounded-md border px-3 py-2 text-left text-sm transition-[color,background-color,border-color,transform] duration-[var(--dur)] ease-soft active:scale-[0.98]",
         !Icon && "pr-8",
         selected ? "border-binding bg-binding-wash text-binding" : "border-rule bg-paper text-ink hover:border-ink-faint",
       )}
     >
-      {Icon && (selected ? <Check className="mt-0.5 size-4 shrink-0" strokeWidth={2.5} /> : <Icon className="mt-0.5 size-4 shrink-0 text-ink-faint" />)}
-      {!Icon && selected && <Check className="absolute top-2.5 right-2.5 size-4" strokeWidth={2.5} />}
+      {Icon && (selected ? <Check className="pop mt-0.5 size-4 shrink-0" strokeWidth={2.5} /> : <Icon className="mt-0.5 size-4 shrink-0 text-ink-faint" />)}
+      {!Icon && selected && <Check className="pop absolute top-2.5 right-2.5 size-4" strokeWidth={2.5} />}
       <span className="min-w-0">
         <span className="block font-medium">{children}</span>
         {sub && <span className={cx("block text-xs", selected ? "text-binding/80" : "text-ink-faint")}>{sub}</span>}
       </span>
     </button>
+  );
+}
+
+/** Tabs with an underline that slides to the selected tab. */
+function Tabs({ tabs, value, onChange }) {
+  const refs = useRef({});
+  const [bar, setBar] = useState(null);
+  const labelKey = tabs.map(([key, text, count]) => `${key}:${text}:${count}`).join("|");
+
+  useLayoutEffect(() => {
+    const measure = () => {
+      const el = refs.current[value];
+      if (!el) return;
+      setBar((prev) => (prev && prev.left === el.offsetLeft && prev.width === el.offsetWidth ? prev : { left: el.offsetLeft, width: el.offsetWidth }));
+    };
+    measure();
+    window.addEventListener("resize", measure);
+    return () => window.removeEventListener("resize", measure);
+  }, [value, labelKey]);
+
+  return (
+    <div className="relative flex gap-6 border-b border-rule" role="tablist">
+      {tabs.map(([key, text, count]) => (
+        <button
+          key={key}
+          ref={(el) => (refs.current[key] = el)}
+          role="tab"
+          aria-selected={value === key}
+          onClick={() => value !== key && onChange(key)}
+          className={cx("pb-2.5 text-[15px] transition-colors duration-[var(--dur)]", value === key ? "text-ink" : "text-ink-soft hover:text-ink")}
+        >
+          {text} <span className="text-ink-faint tabular-nums">{count}</span>
+        </button>
+      ))}
+      {bar && (
+        <span
+          className="absolute -bottom-px h-0.5 bg-binding transition-[left,width] duration-[var(--dur-slow)] ease-soft"
+          style={{ left: bar.left, width: bar.width }}
+          aria-hidden="true"
+        />
+      )}
+    </div>
   );
 }
 
@@ -61,6 +103,7 @@ export default function GeneratePage() {
   const [result, setResult] = useState(() => load("capsense.result", null, "session"));
   const [tab, setTab] = useState("generated");
   const [selected, setSelected] = useState(() => load("capsense.selected", null, "session"));
+  const [expanded, setExpanded] = useState(() => new Set(load("capsense.expanded", [], "session")));
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const resultsRef = useRef(null);
@@ -68,6 +111,25 @@ export default function GeneratePage() {
   useEffect(() => save("capsense.form", form, "session"), [form]);
   useEffect(() => save("capsense.result", result, "session"), [result]);
   useEffect(() => save("capsense.selected", selected, "session"), [selected]);
+  useEffect(() => save("capsense.expanded", [...expanded], "session"), [expanded]);
+
+  /** Open/close a row. Opening also puts it on the title page; other rows stay as they are. */
+  function toggleRow(title) {
+    setExpanded((prev) => {
+      const next = new Set(prev);
+      if (next.has(title)) next.delete(title);
+      else {
+        next.add(title);
+        setSelected(title);
+      }
+      return next;
+    });
+  }
+
+  function openOnly(title) {
+    setExpanded(new Set(title ? [title] : []));
+    setSelected(title);
+  }
 
   const set = (key, value) => setForm((f) => ({ ...f, [key]: value }));
   const toggleInterest = (key) =>
@@ -80,7 +142,7 @@ export default function GeneratePage() {
       const data = await api.post("/titles/generate", { ...form, seed, engine: engineOverride || engine });
       setResult(data);
       setTab("generated");
-      setSelected(data.generated[0]?.title || null);
+      openOnly(data.generated[0]?.title || null);
       if (user && !progress?.generated) refresh();
       requestAnimationFrame(() => resultsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }));
     } catch (err) {
@@ -156,7 +218,7 @@ export default function GeneratePage() {
                   onClick={() => set("difficulty", level)}
                   aria-pressed={form.difficulty === level}
                   className={cx(
-                    "flex flex-col items-start justify-start rounded-md border px-3 py-2.5 text-left transition-colors",
+                    "flex flex-col items-start justify-start rounded-md border px-3 py-2.5 text-left transition-[background-color,border-color,transform] duration-[var(--dur)] ease-soft active:scale-[0.98]",
                     form.difficulty === level ? "border-binding bg-binding-wash" : "border-rule bg-paper hover:border-ink-faint",
                   )}
                 >
@@ -213,49 +275,46 @@ export default function GeneratePage() {
                 <Button variant="secondary" icon={RefreshCw} loading={loading} onClick={() => run({ seed: result.seed + 1 })}>Suggest different titles</Button>
               </div>
 
-              <div className="flex gap-6 border-b border-rule" role="tablist">
-                {[
+              <Tabs
+                value={tab}
+                onChange={(key) => {
+                  setTab(key);
+                  openOnly(lists[key][0]?.title || null);
+                }}
+                tabs={[
                   ["generated", result.engine === "ai" ? "New ideas from AI" : "New ideas", lists.generated.length],
                   ["recommended", "Already done", lists.recommended.length],
-                ].map(([key, text, count]) => (
-                  <button
-                    key={key}
-                    role="tab"
-                    aria-selected={tab === key}
-                    onClick={() => {
-                      setTab(key);
-                      setSelected(lists[key][0]?.title || null);
-                    }}
-                    className={cx("-mb-px border-b-2 pb-2.5 text-[15px] transition-colors", tab === key ? "border-binding font-medium text-ink" : "border-transparent text-ink-soft hover:text-ink")}
-                  >
-                    {text} <span className="text-ink-faint tabular-nums">{count}</span>
-                  </button>
-                ))}
+                ]}
+              />
+
+              {/* Keyed by tab and result set: switching tabs or getting new results replays the
+                  arrival stagger; opening rows inside a list doesn't. */}
+              <div key={`${tab}-${result.seed}-${result.engine}`}>
+                {tab === "recommended" && (
+                  <p className="fade-in mt-4 mb-1 text-sm text-ink-soft">Capstones in our records that are closest to your choices. Read them for inspiration and to avoid repeating a past project.</p>
+                )}
+                {lists[tab].length ? (
+                  <ol className="mt-2 border-b border-rule">
+                    {lists[tab].map((item, i) => (
+                      <TitleRow
+                        key={item.title}
+                        index={i}
+                        rank={i + 1}
+                        item={item}
+                        expanded={expanded.has(item.title)}
+                        selected={selected === item.title}
+                        onToggle={() => toggleRow(item.title)}
+                        saved={actions.isSaved(item.title)}
+                        onToggleSave={actions.toggleSave}
+                        onDevelop={actions.develop}
+                        developing={actions.developing === item.title}
+                      />
+                    ))}
+                  </ol>
+                ) : (
+                  <EmptyState title="No ideas for this combination">Add another technology or choose a different difficulty, then try again.</EmptyState>
+                )}
               </div>
-
-              {tab === "recommended" && (
-                <p className="mt-4 mb-1 text-sm text-ink-soft">Capstones in our records that are closest to your choices. Read them for inspiration and to avoid repeating a past project.</p>
-              )}
-
-              {lists[tab].length ? (
-                <ol className="mt-2 border-b border-rule">
-                  {lists[tab].map((item, i) => (
-                    <TitleRow
-                      key={item.title}
-                      rank={i + 1}
-                      item={item}
-                      selected={selected === item.title}
-                      onSelect={() => setSelected(selected === item.title ? null : item.title)}
-                      saved={actions.isSaved(item.title)}
-                      onToggleSave={actions.toggleSave}
-                      onDevelop={actions.develop}
-                      developing={actions.developing === item.title}
-                    />
-                  ))}
-                </ol>
-              ) : (
-                <EmptyState title="No ideas for this combination">Add another technology or choose a different difficulty, then try again.</EmptyState>
-              )}
             </section>
           )}
         </div>

@@ -1,6 +1,6 @@
 import { LogOut, Menu, X } from "lucide-react";
-import { useState } from "react";
-import { Link, NavLink, Outlet, useNavigate } from "react-router";
+import { useEffect, useState } from "react";
+import { Link, NavLink, Outlet, useLocation, useNavigate } from "react-router";
 import { api } from "../api";
 import { useApp } from "../app-context";
 import { cx } from "./ui";
@@ -41,7 +41,13 @@ function EngineSwitch() {
 export default function Layout() {
   const { user, progress, recordProgress, applySession, toast, toasts } = useApp();
   const navigate = useNavigate();
+  const location = useLocation();
   const [open, setOpen] = useState(false);
+
+  useEffect(() => {
+    // New page starts at the top (smooth scrolling between pages would feel like lag).
+    window.scrollTo({ top: 0, behavior: "instant" });
+  }, [location.pathname]);
   const showTour = Boolean(user && progress && !progress.tour_seen);
 
   async function logout() {
@@ -54,7 +60,8 @@ export default function Layout() {
   const linkCls = ({ isActive }) =>
     cx(
       "relative py-1 text-[14px] transition-colors",
-      isActive ? "font-medium text-ink after:absolute after:inset-x-0 after:-bottom-[19px] after:h-0.5 after:bg-binding" : "text-ink-soft hover:text-ink",
+      "after:absolute after:inset-x-0 after:-bottom-[19px] after:h-0.5 after:origin-center after:bg-binding after:transition-transform after:duration-[var(--dur)] after:ease-soft",
+      isActive ? "font-medium text-ink after:scale-x-100" : "text-ink-soft after:scale-x-0 hover:text-ink",
     );
   const mobileCls = ({ isActive }) => cx("block rounded-md px-3 py-2.5 text-[15px]", isActive ? "bg-binding-wash font-medium text-binding" : "text-ink-soft");
 
@@ -107,7 +114,11 @@ export default function Layout() {
       </header>
 
       <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-10 sm:px-6 sm:py-14">
-        <Outlet />
+        {/* Re-keyed per page so each page change gets one short fade. min-h keeps the footer
+            below the fold while a page is still loading, so it doesn't jump. */}
+        <div key={location.pathname} className="page-enter min-h-screen">
+          <Outlet />
+        </div>
       </main>
 
       <footer className="mx-auto w-full max-w-6xl border-t border-rule px-4 py-6 text-[13px] text-ink-faint sm:px-6">
@@ -118,7 +129,7 @@ export default function Layout() {
 
       <div className="pointer-events-none fixed inset-x-0 bottom-5 z-50 flex flex-col items-center gap-2 px-4" aria-live="polite">
         {toasts.map((t) => (
-          <div key={t.id} className={cx("rise pointer-events-auto rounded-md px-4 py-2.5 text-sm shadow-lg", t.tone === "error" ? "bg-redpen text-white" : "bg-ink text-paper")}>
+          <div key={t.id} className={cx(t.leaving ? "toast-out" : "toast-in", "pointer-events-auto rounded-md px-4 py-2.5 text-sm shadow-lg", t.tone === "error" ? "bg-redpen text-white" : "bg-ink text-paper")}>
             {t.message}
           </div>
         ))}

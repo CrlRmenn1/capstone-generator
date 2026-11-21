@@ -43,9 +43,27 @@ export default function WelcomeTour({ onClose }) {
   const { user } = useApp();
   const navigate = useNavigate();
   const [step, setStep] = useState(0);
+  const [direction, setDirection] = useState("from-right");
+  const [closing, setClosing] = useState(false);
   const nextRef = useRef(null);
   const current = STEPS[step];
   const last = step === STEPS.length - 1;
+
+  const go = (to) => {
+    const target = Math.max(0, Math.min(STEPS.length - 1, to));
+    setDirection(target >= step ? "from-right" : "from-left");
+    setStep(target);
+  };
+
+  // Play the exit animation, then tell the parent.
+  const close = (after) => {
+    if (closing) return;
+    setClosing(true);
+    setTimeout(() => {
+      onClose();
+      after?.();
+    }, 160);
+  };
 
   useEffect(() => {
     nextRef.current?.focus();
@@ -53,34 +71,36 @@ export default function WelcomeTour({ onClose }) {
 
   useEffect(() => {
     const onKey = (e) => {
-      if (e.key === "Escape") onClose();
-      if (e.key === "ArrowRight") setStep((s) => Math.min(s + 1, STEPS.length - 1));
-      if (e.key === "ArrowLeft") setStep((s) => Math.max(s - 1, 0));
+      if (e.key === "Escape") close();
+      if (e.key === "ArrowRight") go(step + 1);
+      if (e.key === "ArrowLeft") go(step - 1);
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [onClose]);
+  });
 
   function finish() {
-    onClose();
-    navigate("/");
-    requestAnimationFrame(() => document.getElementById("preferences")?.scrollIntoView({ behavior: "smooth", block: "start" }));
+    close(() => {
+      navigate("/");
+      setTimeout(() => document.getElementById("preferences")?.scrollIntoView({ behavior: "smooth", block: "start" }), 60);
+    });
   }
 
   return (
-    <div className="fixed inset-0 z-40 flex items-end justify-center bg-ink/40 sm:items-center sm:p-4" onClick={onClose}>
+    <div className={cx("fixed inset-0 z-40 flex items-end justify-center bg-ink/40 sm:items-center sm:p-4", closing ? "backdrop-out" : "backdrop-in")} onClick={() => close()}>
       <div
         role="dialog"
         aria-modal="true"
         aria-labelledby="tour-title"
-        className="rise relative max-h-[92vh] w-full overflow-y-auto bg-paper shadow-2xl sm:max-w-[34rem] sm:rounded-md"
+        className={cx("relative max-h-[92vh] w-full overflow-x-hidden overflow-y-auto bg-paper shadow-2xl sm:max-w-[34rem] sm:rounded-md", closing ? "dialog-out" : "dialog-in")}
         onClick={(e) => e.stopPropagation()}
       >
-        <button onClick={onClose} className="absolute top-4 right-4 p-1 text-ink-faint hover:text-ink" aria-label="Close tour">
+        <button onClick={() => close()} className="absolute top-4 right-4 z-10 p-1 text-ink-faint transition-colors hover:text-ink" aria-label="Close tour">
           <X className="size-4" />
         </button>
 
-        <div className="px-7 pt-8 pb-6 sm:px-9">
+        {/* min-h keeps the dialog from resizing between short and long steps. */}
+        <div key={step} className={cx("min-h-[21rem] px-7 pt-8 pb-6 sm:px-9", direction)}>
           <p className="text-[13px] text-ink-faint">{step === 0 ? "Getting started" : `Step ${step} of ${STEPS.length - 1}`}</p>
           <h2 id="tour-title" className="mt-2 font-serif text-[1.75rem] leading-tight font-semibold">{current.title(user?.name.split(" ")[0] || "there")}</h2>
           <div className="mt-4 space-y-3 text-[15px] leading-relaxed text-ink-soft">
@@ -106,19 +126,19 @@ export default function WelcomeTour({ onClose }) {
         <div className="flex items-center gap-3 border-t border-rule px-7 py-4 sm:px-9">
           <div className="flex gap-1.5" aria-hidden="true">
             {STEPS.map((_, i) => (
-              <button key={i} onClick={() => setStep(i)} tabIndex={-1} className={cx("h-1 rounded-full transition-all", i === step ? "w-5 bg-binding" : "w-1.5 bg-rule")} />
+              <button key={i} onClick={() => go(i)} tabIndex={-1} className={cx("h-1 rounded-full transition-all duration-[var(--dur-slow)] ease-soft", i === step ? "w-5 bg-binding" : "w-1.5 bg-rule")} />
             ))}
           </div>
           <div className="ml-auto flex gap-2">
             {step === 0 ? (
-              <Button variant="ghost" size="sm" onClick={onClose}>Skip</Button>
+              <Button variant="ghost" size="sm" onClick={() => close()}>Skip</Button>
             ) : (
-              <Button variant="ghost" size="sm" onClick={() => setStep(step - 1)}>Back</Button>
+              <Button variant="ghost" size="sm" onClick={() => go(step - 1)}>Back</Button>
             )}
             {last ? (
               <Button ref={nextRef} size="sm" onClick={finish}>Start finding titles</Button>
             ) : (
-              <Button ref={nextRef} size="sm" onClick={() => setStep(step + 1)}>{step === 0 ? "Show me how" : "Next"}</Button>
+              <Button ref={nextRef} size="sm" onClick={() => go(step + 1)}>{step === 0 ? "Show me how" : "Next"}</Button>
             )}
           </div>
         </div>
