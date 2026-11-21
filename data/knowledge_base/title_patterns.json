@@ -1,0 +1,22 @@
+{
+  "system": [
+    "{system}: A {platform} {subject} {artifact} for {beneficiary}",
+    "{system}: A {platform} {subject} {artifact} with {feature} for {setting}",
+    "Development of a {platform} {subject} {artifact} Using {technique} for {beneficiary}",
+    "{system}: {subject} Using {technique} for {beneficiary} in {setting}",
+    "Design and Implementation of a {platform} {subject} {artifact} with {feature}",
+    "{system}: An Integrated {subject} {artifact} Using {technique} for {setting}",
+    "{system}: Enhancing {subject} Through {technique} for {beneficiary}",
+    "{system}: A {platform} {subject} {artifact} with {technique} and {feature}"
+  ],
+  "simulation": [
+    "{system}: A {platform} {artifact} on {topic} for {beneficiary}",
+    "{system}: An Interactive {platform} {artifact} for Teaching {topic}",
+    "Development of a {platform} {artifact} with {feature} on {topic} for {beneficiary}",
+    "{system}: Learning {topic} Through a {platform} {artifact} Using {technique}",
+    "{system}: A {platform} {artifact} Using {technique} to Promote {topic} Among {beneficiary}",
+    "Design and Development of a {platform} {artifact} on {topic} with {feature}",
+    "{system}: Building Awareness of {topic} Through a {platform} {artifact} for {beneficiary}",
+    "{system}: A {platform} {artifact} with {feature} for Learning {topic}"
+  ]
+}

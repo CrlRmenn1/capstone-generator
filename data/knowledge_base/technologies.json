@@ -1,0 +1,184 @@
+{
+  "web": {
+    "label": "Web Development",
+    "limitation": "The system requires an internet connection to access its online features.",
+    "keywords": ["web", "web-based", "online", "portal", "website", "system"],
+    "pattern_group": "system",
+    "platforms": ["web-based", "cloud-based", "online"],
+    "artifacts": ["system", "portal", "platform"],
+    "name_suffixes": ["Hub", "Portal", "Link", "Desk"],
+    "techniques": [
+      {"name": "role-based access control", "purpose": "giving each type of user secure, appropriate access", "difficulty": "beginner"},
+      {"name": "QR code tracking", "purpose": "fast identification and tracking of records", "difficulty": "beginner"},
+      {"name": "decision support analytics", "purpose": "turning stored records into actionable summaries", "difficulty": "intermediate"},
+      {"name": "real-time WebSocket updates", "purpose": "instantly reflecting changes for all connected users", "difficulty": "intermediate"},
+      {"name": "progressive web app offline sync", "purpose": "continued use in areas with unstable internet", "difficulty": "advanced"},
+      {"name": "geographic information system (GIS) mapping", "purpose": "visualizing records by location", "difficulty": "advanced"}
+    ],
+    "features": ["SMS notifications", "an analytics dashboard", "automated report generation", "email notifications", "a mobile-responsive interface"],
+    "stack": {
+      "beginner": ["HTML/CSS", "JavaScript", "PHP", "MySQL", "Bootstrap"],
+      "intermediate": ["Laravel or Django", "MySQL", "Tailwind CSS", "Chart.js"],
+      "advanced": ["React or Vue", "Node.js or Django REST Framework", "PostgreSQL", "Docker"]
+    }
+  },
+  "mobile": {
+    "label": "Mobile Development",
+    "limitation": "The application is limited to Android devices with a supported operating system version.",
+    "keywords": ["mobile", "android", "app", "smartphone", "application"],
+    "pattern_group": "system",
+    "platforms": ["mobile", "Android-based", "cross-platform mobile"],
+    "artifacts": ["app", "application"],
+    "name_suffixes": ["Go", "Mo", "Pocket", "Tap"],
+    "techniques": [
+      {"name": "GPS geolocation", "purpose": "capturing and sharing accurate user locations", "difficulty": "beginner"},
+      {"name": "push notifications", "purpose": "timely reminders and alerts to users", "difficulty": "beginner"},
+      {"name": "barcode and QR scanning", "purpose": "quick data entry using the phone camera", "difficulty": "beginner"},
+      {"name": "offline-first data synchronization", "purpose": "working without internet and syncing later", "difficulty": "intermediate"},
+      {"name": "on-device image recognition", "purpose": "identifying conditions directly from photos", "difficulty": "advanced"},
+      {"name": "Bluetooth Low Energy connectivity", "purpose": "communicating with nearby devices and sensors", "difficulty": "advanced"}
+    ],
+    "features": ["push notifications", "GPS tracking", "offline access", "in-app messaging", "QR code scanning"],
+    "stack": {
+      "beginner": ["Android Studio (Java or Kotlin)", "Firebase", "SQLite"],
+      "intermediate": ["Flutter (Dart)", "Firebase", "Google Maps API"],
+      "advanced": ["Flutter or React Native", "REST API backend", "TensorFlow Lite"]
+    }
+  },
+  "ai_ml": {
+    "label": "Artificial Intelligence / Machine Learning",
+    "limitation": "The accuracy of the model depends on the quality and size of the dataset gathered by the researchers.",
+    "keywords": ["artificial intelligence", "machine learning", "prediction", "classification", "detection", "intelligent"],
+    "pattern_group": "system",
+    "platforms": ["AI-powered", "machine learning-based", "intelligent"],
+    "artifacts": ["system", "application"],
+    "name_suffixes": ["Mind", "Sense", "IQ", "Bot"],
+    "techniques": [
+      {"name": "a rule-based expert system", "purpose": "giving consistent recommendations based on expert knowledge", "difficulty": "beginner"},
+      {"name": "naive Bayes classification", "purpose": "categorizing cases from historical data", "difficulty": "beginner"},
+      {"name": "random forest prediction", "purpose": "predicting outcomes from multiple factors", "difficulty": "intermediate"},
+      {"name": "a natural language processing chatbot", "purpose": "answering user inquiries automatically", "difficulty": "intermediate"},
+      {"name": "convolutional neural network image classification", "purpose": "detecting conditions from images", "difficulty": "advanced"},
+      {"name": "LSTM time-series forecasting", "purpose": "forecasting future trends from past data", "difficulty": "advanced"},
+      {"name": "YOLO object detection", "purpose": "locating and counting objects in real time", "difficulty": "advanced"}
+    ],
+    "features": ["a chatbot assistant", "predictive analytics", "automated recommendations", "a model performance dashboard"],
+    "stack": {
+      "beginner": ["Python", "scikit-learn", "Flask", "SQLite"],
+      "intermediate": ["Python", "scikit-learn or Rasa", "Flask or Django", "MySQL"],
+      "advanced": ["Python", "TensorFlow or PyTorch", "OpenCV", "FastAPI", "PostgreSQL"]
+    }
+  },
+  "iot": {
+    "label": "Internet of Things (IoT)",
+    "limitation": "The hardware is a small-scale prototype and depends on a stable power supply and network connection.",
+    "keywords": ["iot", "internet of things", "sensor", "arduino", "microcontroller", "monitoring", "device"],
+    "pattern_group": "system",
+    "platforms": ["IoT-based", "sensor-based", "Arduino-based"],
+    "artifacts": ["system", "device"],
+    "name_suffixes": ["Watch", "Sense", "Node", "Guard"],
+    "techniques": [
+      {"name": "Arduino sensor monitoring", "purpose": "collecting real-time readings from the environment", "difficulty": "beginner"},
+      {"name": "RFID identification", "purpose": "automatically identifying people or items", "difficulty": "beginner"},
+      {"name": "GSM-based SMS alerting", "purpose": "sending alerts even without internet access", "difficulty": "beginner"},
+      {"name": "ESP32 Wi-Fi telemetry", "purpose": "sending sensor data to the cloud", "difficulty": "intermediate"},
+      {"name": "LoRa long-range communication", "purpose": "covering wide areas with low-power sensors", "difficulty": "advanced"},
+      {"name": "edge computing with Raspberry Pi", "purpose": "processing sensor data on-site", "difficulty": "advanced"}
+    ],
+    "features": ["real-time SMS alerts", "a mobile monitoring app", "solar power support", "cloud data logging"],
+    "stack": {
+      "beginner": ["Arduino Uno", "Arduino IDE (C/C++)", "sensors", "SIM800L GSM module"],
+      "intermediate": ["ESP32", "Firebase Realtime Database", "Flutter or MIT App Inventor"],
+      "advanced": ["Raspberry Pi", "MQTT", "LoRa modules", "Node-RED", "InfluxDB and Grafana"]
+    }
+  },
+  "game_dev": {
+    "label": "Game Development",
+    "limitation": "The game covers only selected lessons and is meant to supplement, not replace, formal instruction.",
+    "keywords": ["game", "gamification", "serious game", "educational game", "unity", "simulation"],
+    "pattern_group": "simulation",
+    "platforms": ["2D", "3D", "mobile", "web-based"],
+    "artifacts": ["game", "serious game", "educational game"],
+    "name_suffixes": ["Quest", "Hero", "Play", "Venture"],
+    "techniques": [
+      {"name": "gamified quizzes", "purpose": "reinforcing lessons through play", "difficulty": "beginner"},
+      {"name": "level-based progression", "purpose": "introducing concepts gradually", "difficulty": "beginner"},
+      {"name": "adaptive difficulty", "purpose": "matching challenges to each player's skill", "difficulty": "intermediate"},
+      {"name": "procedural content generation", "purpose": "producing fresh levels on every playthrough", "difficulty": "advanced"},
+      {"name": "multiplayer networking", "purpose": "letting learners play and compete together", "difficulty": "advanced"}
+    ],
+    "features": ["leaderboards", "achievement badges", "progress tracking", "voice narration"],
+    "stack": {
+      "beginner": ["Godot (GDScript) or Unity (C#)", "Aseprite or Piskel for 2D art"],
+      "intermediate": ["Unity (C#)", "Firebase", "Blender"],
+      "advanced": ["Unity (C#)", "Photon or Netcode for GameObjects", "Unity ML-Agents"]
+    }
+  },
+  "data_analytics": {
+    "label": "Data Analytics",
+    "limitation": "The analytics and forecasts depend on the completeness and accuracy of the historical data provided.",
+    "keywords": ["data analytics", "dashboard", "visualization", "forecasting", "statistics", "data"],
+    "pattern_group": "system",
+    "platforms": ["data-driven", "web-based", "analytics-based"],
+    "artifacts": ["dashboard", "decision support system", "analytics platform"],
+    "name_suffixes": ["Insight", "Metrics", "Lens", "Stats"],
+    "techniques": [
+      {"name": "descriptive statistics and visualization", "purpose": "summarizing records into clear charts", "difficulty": "beginner"},
+      {"name": "k-means clustering", "purpose": "grouping similar records to reveal patterns", "difficulty": "intermediate"},
+      {"name": "linear regression forecasting", "purpose": "estimating future values from trends", "difficulty": "intermediate"},
+      {"name": "ARIMA time-series forecasting", "purpose": "forecasting seasonal patterns", "difficulty": "advanced"},
+      {"name": "association rule mining", "purpose": "discovering items or events that occur together", "difficulty": "advanced"}
+    ],
+    "features": ["interactive data visualization", "automated report generation", "trend forecasting", "exportable reports"],
+    "stack": {
+      "beginner": ["Python (pandas)", "Power BI or Excel", "MySQL"],
+      "intermediate": ["Python (pandas, scikit-learn)", "Streamlit or Flask", "Chart.js"],
+      "advanced": ["Python (statsmodels, mlxtend)", "Apache Superset or Metabase", "PostgreSQL"]
+    }
+  },
+  "cybersecurity": {
+    "label": "Cybersecurity",
+    "limitation": "The security features address the threats covered in this study and do not guarantee protection against all possible attacks.",
+    "keywords": ["security", "secure", "encryption", "authentication", "privacy", "cybersecurity"],
+    "pattern_group": "system",
+    "platforms": ["secure", "encrypted", "privacy-focused"],
+    "artifacts": ["system", "platform"],
+    "name_suffixes": ["Shield", "Lock", "Vault", "Guard"],
+    "techniques": [
+      {"name": "two-factor authentication", "purpose": "protecting accounts from unauthorized access", "difficulty": "beginner"},
+      {"name": "password hashing and strength checking", "purpose": "storing credentials safely", "difficulty": "beginner"},
+      {"name": "AES data encryption", "purpose": "keeping sensitive records confidential", "difficulty": "intermediate"},
+      {"name": "audit logging with intrusion alerts", "purpose": "tracing every action and flagging suspicious activity", "difficulty": "intermediate"},
+      {"name": "blockchain-based record verification", "purpose": "making records tamper-evident", "difficulty": "advanced"},
+      {"name": "anomaly-based intrusion detection", "purpose": "detecting unusual access patterns automatically", "difficulty": "advanced"}
+    ],
+    "features": ["two-factor authentication", "audit trails", "encrypted backups", "role-based access control"],
+    "stack": {
+      "beginner": ["PHP or Python", "MySQL", "bcrypt password hashing"],
+      "intermediate": ["Django or Laravel", "AES encryption library", "TOTP (Google Authenticator)"],
+      "advanced": ["Python", "Hyperledger Fabric or Ethereum (Solidity)", "scikit-learn", "ELK Stack"]
+    }
+  },
+  "ar_vr": {
+    "label": "Augmented / Virtual Reality",
+    "limitation": "The application requires a compatible device with the camera or headset support needed for AR or VR features.",
+    "keywords": ["augmented reality", "virtual reality", "ar", "vr", "3d", "immersive"],
+    "pattern_group": "simulation",
+    "platforms": ["augmented reality", "virtual reality", "AR-based mobile"],
+    "artifacts": ["application", "simulator", "learning tool"],
+    "name_suffixes": ["AR", "VR", "View", "Vision"],
+    "techniques": [
+      {"name": "marker-based augmented reality", "purpose": "showing 3D content when a printed marker is scanned", "difficulty": "beginner"},
+      {"name": "3D model visualization", "purpose": "letting learners inspect objects from every angle", "difficulty": "beginner"},
+      {"name": "markerless plane detection", "purpose": "placing 3D content on real-world surfaces", "difficulty": "intermediate"},
+      {"name": "immersive VR simulation", "purpose": "practicing scenarios safely in a virtual environment", "difficulty": "advanced"},
+      {"name": "hand-tracking interaction", "purpose": "natural interaction without controllers", "difficulty": "advanced"}
+    ],
+    "features": ["3D interactive models", "guided walkthroughs", "quiz-based assessment", "voice narration"],
+    "stack": {
+      "beginner": ["Unity (C#)", "Vuforia", "Blender"],
+      "intermediate": ["Unity (C#)", "AR Foundation (ARCore)", "Blender"],
+      "advanced": ["Unity (C#)", "XR Interaction Toolkit", "Meta Quest SDK"]
+    }
+  }
+}

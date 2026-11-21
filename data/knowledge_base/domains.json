@@ -1,0 +1,107 @@
+{
+  "education": {
+    "label": "Education",
+    "keywords": ["education", "school", "students", "teachers", "learning", "classroom"],
+    "beneficiaries": ["senior high school students", "college students", "teachers", "school administrators", "elementary learners"],
+    "settings": ["public high schools", "state universities", "elementary schools", "a community college"],
+    "name_roots": ["Edu", "Learn", "Class", "Study"],
+    "learning_topics": ["basic programming concepts", "Philippine history", "mathematics fundamentals", "English grammar", "science laboratory safety"],
+    "problems": [
+      {"subject": "student attendance monitoring", "problem": "manual attendance checking that is slow and prone to errors", "goal": "record attendance quickly and accurately", "module": "Attendance Monitoring", "module_desc": "records and summarizes student attendance", "beneficiaries": ["teachers", "college students", "senior high school students"]},
+      {"subject": "learning management", "problem": "scattered learning materials and unorganized submission of requirements", "goal": "centralize learning materials and track submissions", "module": "Learning Materials and Submissions", "module_desc": "organizes lessons and tracks student submissions", "beneficiaries": ["teachers", "senior high school students", "college students"]},
+      {"subject": "student performance monitoring", "problem": "late identification of students who are at risk of failing", "goal": "help teachers identify at-risk students early", "module": "Performance Analytics", "module_desc": "monitors grades and flags at-risk students", "beneficiaries": ["teachers", "guidance counselors", "school administrators"]},
+      {"subject": "library resource management", "problem": "time-consuming book borrowing and manual inventory tracking", "goal": "speed up borrowing and keep library inventory accurate", "module": "Library Circulation", "module_desc": "manages borrowing, returns, and book inventory", "beneficiaries": ["librarians", "college students"]},
+      {"subject": "enrollment processing", "problem": "long queues and paper-based enrollment procedures", "goal": "make enrollment faster and paperless", "module": "Online Enrollment", "module_desc": "handles student registration and subject enlistment", "beneficiaries": ["registrar staff", "college students", "school administrators"]}
+    ]
+  },
+  "health": {
+    "label": "Health",
+    "keywords": ["health", "healthcare", "medical", "patients", "clinic", "hospital"],
+    "beneficiaries": ["barangay health workers", "patients", "rural health unit staff", "senior citizens", "pregnant women"],
+    "settings": ["barangay health centers", "rural health units", "community clinics", "a district hospital"],
+    "name_roots": ["Medi", "Health", "Care", "Vita"],
+    "learning_topics": ["first aid procedures", "proper hand hygiene", "basic life support", "nutrition and healthy eating", "dengue prevention"],
+    "problems": [
+      {"subject": "patient record management", "problem": "paper-based patient records that are hard to retrieve and easy to lose", "goal": "keep patient records organized, searchable, and secure", "module": "Patient Records", "module_desc": "stores and retrieves patient profiles and consultation history", "beneficiaries": ["rural health unit staff", "barangay health workers"]},
+      {"subject": "appointment scheduling", "problem": "long waiting times and overcrowding during consultations", "goal": "reduce waiting time through organized scheduling", "module": "Appointment Scheduling", "module_desc": "lets patients book and track consultation schedules", "beneficiaries": ["patients", "rural health unit staff"]},
+      {"subject": "medicine inventory monitoring", "problem": "medicine stock-outs and unnoticed expired medicines", "goal": "keep medicine supply available and up to date", "module": "Medicine Inventory", "module_desc": "tracks stock levels and expiry dates of medicines", "beneficiaries": ["barangay health workers", "rural health unit staff", "pharmacists"]},
+      {"subject": "maternal health monitoring", "problem": "missed prenatal checkups and poorly tracked pregnancies", "goal": "help health workers follow up with expectant mothers on time", "module": "Prenatal Monitoring", "module_desc": "tracks prenatal visits and sends checkup reminders", "beneficiaries": ["pregnant women", "barangay health workers"]},
+      {"subject": "disease case surveillance", "problem": "delayed reporting and consolidation of disease cases", "goal": "speed up detection and reporting of disease outbreaks", "module": "Case Reporting", "module_desc": "records disease cases and summarizes them by area", "beneficiaries": ["barangay health workers", "municipal health officers"]}
+    ]
+  },
+  "agriculture": {
+    "label": "Agriculture",
+    "keywords": ["agriculture", "farming", "farmers", "crops", "farm", "harvest"],
+    "beneficiaries": ["small-scale farmers", "agricultural technicians", "farmer cooperatives", "municipal agriculture officers"],
+    "settings": ["rural barangays", "rice farms", "vegetable farms", "greenhouses"],
+    "name_roots": ["Agri", "Farm", "Crop", "Harvest"],
+    "learning_topics": ["sustainable farming practices", "rice cultivation", "integrated pest management", "organic composting"],
+    "problems": [
+      {"subject": "crop health monitoring", "problem": "late detection of crop diseases that leads to reduced yield", "goal": "help farmers detect crop problems earlier", "module": "Crop Health Monitoring", "module_desc": "records and analyzes crop condition over time", "beneficiaries": ["small-scale farmers", "agricultural technicians"]},
+      {"subject": "soil moisture and irrigation monitoring", "problem": "inefficient manual irrigation that wastes water and stresses crops", "goal": "water crops only when they need it", "module": "Irrigation Control", "module_desc": "monitors soil moisture and controls watering schedules", "beneficiaries": ["small-scale farmers", "greenhouse operators"]},
+      {"subject": "pest detection", "problem": "pest infestations that are noticed only after serious damage", "goal": "identify pests early and recommend control measures", "module": "Pest Detection and Advisory", "module_desc": "identifies pests and suggests appropriate treatments", "beneficiaries": ["small-scale farmers", "agricultural technicians"]},
+      {"subject": "farm produce marketing", "problem": "dependence on middlemen that results in low farm-gate prices", "goal": "connect farmers directly with buyers", "module": "Produce Marketplace", "module_desc": "lists farm products and manages buyer orders", "beneficiaries": ["small-scale farmers", "farmer cooperatives"]},
+      {"subject": "livestock health monitoring", "problem": "poor tracking of livestock health, vaccination, and breeding records", "goal": "keep livestock healthy through organized monitoring", "module": "Livestock Records", "module_desc": "tracks vaccination, health, and breeding of animals", "beneficiaries": ["livestock raisers", "municipal agriculture officers"]}
+    ]
+  },
+  "lgu": {
+    "label": "Local Government (LGU)",
+    "keywords": ["government", "barangay", "lgu", "municipal", "residents", "public service"],
+    "beneficiaries": ["barangay officials", "residents", "municipal employees", "constituents"],
+    "settings": ["barangays", "municipal halls", "the city government"],
+    "name_roots": ["Brgy", "Civic", "Bayan", "Gov"],
+    "learning_topics": ["civic responsibilities", "local government processes", "waste segregation ordinances"],
+    "problems": [
+      {"subject": "barangay document request processing", "problem": "long queues and manual processing of clearances and certificates", "goal": "let residents request and receive documents faster", "module": "Document Request", "module_desc": "handles online requests for clearances and certificates", "beneficiaries": ["residents", "barangay officials"]},
+      {"subject": "resident information management", "problem": "outdated and paper-based resident profiles", "goal": "keep an accurate and searchable resident database", "module": "Resident Profiling", "module_desc": "maintains resident and household records", "beneficiaries": ["barangay officials", "barangay secretaries"]},
+      {"subject": "community complaint reporting", "problem": "no centralized way to report and track community complaints", "goal": "make complaint handling transparent and trackable", "module": "Complaint Tracking", "module_desc": "records complaints and tracks their resolution status", "beneficiaries": ["residents", "barangay officials"]},
+      {"subject": "business permit processing", "problem": "slow, multi-step business permit applications", "goal": "shorten the business permit application process", "module": "Permit Application", "module_desc": "manages permit applications, requirements, and approval", "beneficiaries": ["business owners", "municipal employees"]},
+      {"subject": "public announcement dissemination", "problem": "announcements that do not reach residents on time", "goal": "deliver announcements to residents quickly", "module": "Announcements", "module_desc": "publishes announcements and notifies residents", "beneficiaries": ["residents", "barangay officials"]}
+    ]
+  },
+  "sme": {
+    "label": "Small and Medium Enterprises",
+    "keywords": ["business", "store", "retail", "sales", "inventory", "sme"],
+    "beneficiaries": ["small business owners", "sari-sari store owners", "local retailers", "food stall operators"],
+    "settings": ["local businesses", "public markets", "small retail stores"],
+    "name_roots": ["Biz", "Shop", "Trade", "Store"],
+    "learning_topics": ["basic bookkeeping", "inventory management", "customer service"],
+    "problems": [
+      {"subject": "inventory management", "problem": "stock discrepancies caused by manual inventory counting", "goal": "keep stock records accurate and up to date", "module": "Inventory Management", "module_desc": "tracks stock in, stock out, and low-stock items", "beneficiaries": ["small business owners", "sari-sari store owners"]},
+      {"subject": "sales and point-of-sale tracking", "problem": "handwritten sales records and inaccurate daily reports", "goal": "record sales accurately and generate reports automatically", "module": "Point of Sale", "module_desc": "records transactions and summarizes daily sales", "beneficiaries": ["sari-sari store owners", "food stall operators", "local retailers"]},
+      {"subject": "customer order management", "problem": "missed and mixed-up customer orders", "goal": "handle customer orders in an organized way", "module": "Order Management", "module_desc": "receives, tracks, and fulfills customer orders", "beneficiaries": ["food stall operators", "small business owners"]},
+      {"subject": "sales demand forecasting", "problem": "overstocking and understocking because demand is not anticipated", "goal": "help owners plan purchases based on expected demand", "module": "Demand Forecasting", "module_desc": "forecasts product demand from past sales", "beneficiaries": ["local retailers", "small business owners"]},
+      {"subject": "customer loyalty management", "problem": "no system for rewarding and retaining regular customers", "goal": "encourage repeat purchases through rewards", "module": "Loyalty Rewards", "module_desc": "manages customer points and rewards", "beneficiaries": ["local retailers", "small business owners"]}
+    ]
+  },
+  "environment": {
+    "label": "Environment",
+    "keywords": ["environment", "waste", "pollution", "climate", "eco", "sustainability"],
+    "beneficiaries": ["environmental officers", "residents", "local communities", "waste collectors"],
+    "settings": ["coastal barangays", "urban communities", "river basins", "municipal landfills"],
+    "name_roots": ["Eco", "Green", "Terra", "Aqua"],
+    "learning_topics": ["waste segregation", "climate change awareness", "marine conservation", "tree planting"],
+    "problems": [
+      {"subject": "waste collection monitoring", "problem": "overflowing bins and inefficient garbage collection schedules", "goal": "make waste collection timely and efficient", "module": "Collection Scheduling", "module_desc": "schedules and monitors garbage collection routes", "beneficiaries": ["waste collectors", "environmental officers", "residents"]},
+      {"subject": "air quality monitoring", "problem": "lack of local, real-time air quality information", "goal": "give communities timely air quality information", "module": "Air Quality Monitoring", "module_desc": "measures and reports air pollutant levels", "beneficiaries": ["residents", "environmental officers"]},
+      {"subject": "water quality monitoring", "problem": "infrequent and manual testing of water sources", "goal": "detect water contamination early", "module": "Water Quality Monitoring", "module_desc": "measures and logs water quality parameters", "beneficiaries": ["environmental officers", "local communities"]},
+      {"subject": "reforestation tracking", "problem": "poor monitoring of planted trees and their survival", "goal": "track tree planting activities and survival rates", "module": "Tree Monitoring", "module_desc": "geotags planted trees and records their growth", "beneficiaries": ["environmental officers", "local communities"]},
+      {"subject": "energy consumption monitoring", "problem": "unnoticed energy waste in households and offices", "goal": "help users reduce unnecessary energy use", "module": "Energy Monitoring", "module_desc": "tracks electricity usage and highlights waste", "beneficiaries": ["households", "office administrators"]}
+    ]
+  },
+  "disaster": {
+    "label": "Disaster Risk Reduction",
+    "keywords": ["disaster", "emergency", "flood", "evacuation", "early warning", "drrm"],
+    "beneficiaries": ["MDRRMO personnel", "barangay responders", "evacuees", "residents in hazard-prone areas"],
+    "settings": ["flood-prone barangays", "coastal communities", "evacuation centers", "the municipality"],
+    "name_roots": ["Resq", "Safe", "Alert", "Ready"],
+    "learning_topics": ["earthquake preparedness", "fire safety", "flood evacuation procedures", "typhoon preparedness"],
+    "problems": [
+      {"subject": "flood early warning", "problem": "late flood warnings that leave residents little time to evacuate", "goal": "warn residents early enough to evacuate safely", "module": "Early Warning", "module_desc": "monitors flood levels and issues warnings", "beneficiaries": ["residents in hazard-prone areas", "MDRRMO personnel"]},
+      {"subject": "evacuation center management", "problem": "manual and inaccurate tracking of evacuees and center capacity", "goal": "account for evacuees accurately during disasters", "module": "Evacuee Registration", "module_desc": "registers evacuees and monitors center capacity", "beneficiaries": ["MDRRMO personnel", "barangay responders"]},
+      {"subject": "emergency incident reporting", "problem": "slow and unclear reporting of emergencies to responders", "goal": "help responders receive accurate reports quickly", "module": "Incident Reporting", "module_desc": "receives emergency reports with location details", "beneficiaries": ["barangay responders", "residents"]},
+      {"subject": "relief goods distribution", "problem": "uneven and duplicated distribution of relief goods", "goal": "distribute relief goods fairly and transparently", "module": "Relief Distribution", "module_desc": "tracks relief inventory and beneficiary claims", "beneficiaries": ["MDRRMO personnel", "barangay responders"]},
+      {"subject": "landslide risk monitoring", "problem": "unmonitored slopes in landslide-prone areas", "goal": "detect signs of landslides before they happen", "module": "Slope Monitoring", "module_desc": "monitors ground movement and rainfall in risky areas", "beneficiaries": ["residents in hazard-prone areas", "MDRRMO personnel"]}
+    ]
+  }
+}

@@ -1,0 +1,52 @@
+import { useState } from "react";
+import { Link } from "react-router";
+import { useApp } from "../app-context";
+import TitlePage from "../components/TitlePage";
+import TitleRow from "../components/TitleRow";
+import { EmptyState, linkButton, PageHeader, Spinner } from "../components/ui";
+import useTitleActions from "../useTitleActions";
+
+export default function SavedPage() {
+  const { user } = useApp();
+  const actions = useTitleActions();
+  const [selected, setSelected] = useState(null);
+  const items = actions.bookmarks.map((b) => ({ id: b.id, ...b.payload, title: b.title, source: b.source }));
+  const current = items.find((t) => t.title === selected);
+
+  return (
+    <div className="grid gap-x-14 lg:grid-cols-[minmax(0,1fr)_340px]">
+      <div className="min-w-0">
+        <PageHeader title="Saved titles" description="Titles your team bookmarked. Open one to compare details or draft its Chapter 1." />
+        {!actions.loaded ? (
+          <Spinner />
+        ) : items.length === 0 ? (
+          <EmptyState title="Nothing saved yet" action={<Link to="/" className={linkButton()}>Find titles</Link>}>
+            Open any suggestion and press Save to keep it here for your team.
+          </EmptyState>
+        ) : (
+          <ol className="border-b border-rule">
+            {items.map((item, i) => (
+              <TitleRow
+                key={item.id}
+                rank={i + 1}
+                item={item}
+                showSource
+                selected={selected === item.title}
+                onSelect={() => setSelected(selected === item.title ? null : item.title)}
+                saved
+                onToggleSave={actions.toggleSave}
+                onDevelop={actions.develop}
+                developing={actions.developing === item.title}
+              />
+            ))}
+          </ol>
+        )}
+      </div>
+      <aside className="hidden lg:block" aria-label="Title page preview">
+        <div className="sticky top-24">
+          <TitlePage title={current?.title} program={user?.program} proponents={user?.name && `${user.name} and team`} note={current?.source === "database" && "Already done"} />
+        </div>
+      </aside>
+    </div>
+  );
+}
